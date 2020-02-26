@@ -1,0 +1,18 @@
+<?php
+/**
+ * @file
+ * Installation hooks for Islandora TK Labels Badge.
+ */
+
+/**
+ * Implements hook_uninstall().
+ */
+function islandora_tk_labels_uninstall() {
+  $vars = array(
+    islandora_tk_labels_rights_field,
+    islandora_tk_labels_image_height,
+    islandora_tk_labels_user,
+    islandora_tk_labels_password,
+  );
+  array_walk($vars, 'variable_del');
+}

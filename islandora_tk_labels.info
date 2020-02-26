@@ -1,0 +1,5 @@
+name = Islandora Traditional Knowledge Labels
+core = 7.x
+description = Displays a Traditional Knowledge Label badge from localcontexts.org.
+dependencies[] = islandora_badges
+package = Islandora Tools
