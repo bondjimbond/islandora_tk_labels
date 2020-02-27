@@ -10,7 +10,7 @@
 function islandora_tk_labels_menu() {
   return array(
     'admin/islandora/tools/badges/tk_labels' => array(
-      'title' => 'Rightsstatements badge',
+      'title' => 'TK Labels',
       'description' => 'Configure TK Labels settings.',
       'page callback' => 'drupal_get_form',
       'page arguments' => array('islandora_tk_labels_admin_form'),

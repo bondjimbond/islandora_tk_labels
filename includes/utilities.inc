@@ -1,4 +1,4 @@
-?php
+<?php
 
 /**
  * @file
@@ -54,17 +54,26 @@ function islandora_tk_labels_authenticate() {
   $options = array(
     'method' => 'POST',
     'headers' => array(
-      'Accept' => 'application/json',
       'Content-Type' => 'application/json',
+      'Accept' => 'application/json',
     ),
-    'data' => array(
+    'data' => json_encode(array(
        'identifier' => $user,
        'password' => $password,
-    ),
+    )),
   );
 
-  $token = drupal_http_request($url, $options);
-dd($token);
+  $response = drupal_http_request($url, $options);
+  $response = json_decode(json_encode($response), true)['data'];
+  $response = explode(",", $response);
+  foreach ($response AS $key) {
+    if (strpos($key, 'jwt') !== false) {
+      $token_key = $key;
+    }
+  }
+  $token_array = explode(":", $token_key);
+  $token = str_replace('"', '', $token_array[1]);
+
   return($token);
 }
 
@@ -76,14 +85,15 @@ dd($token);
 function islandora_tk_labels_get_html($uri) {
   $height = variable_get('islandora_tk_labels_image_height', '31');
   $token = islandora_tk_labels_authenticate();
-
+  $token = 'Bearer ' . $token;
   // Extract the relevant info from the URI and translate to an API URI.
   $community = "demo-community";
-  $class = "tk";
-  $code = explode($uri, "/");
+  $class = "TK";
+  $code = explode("/", $uri);
   end($code);
-  $code = prev($code);
-
+  $code = strtoupper(prev($code));
+  $base_url = "https://api.localcontexts.org/v0";
+  $request_url = $base_url . "/labels/" . $community . "/" . $class . "/" . $code;
 
   $options = array(
     'method' => 'GET',
@@ -94,59 +104,30 @@ function islandora_tk_labels_get_html($uri) {
   );
 
   // The result has lots of objects that must be turned into arrays.
+  $result = get_object_vars(drupal_http_request($request_url, $options));
+  $result = get_object_vars(json_decode($result['data']));
+  
+ // Using $result gets you the result for a specific community. Currently using the demo community, which is California.
+ // Using $result_template gets you the generic information, so using that until we learn more about how communities work.
 
-  $result = get_object_vars(drupal_http_request($uri, $options));
-/*
-  $result_redirect = drupal_http_request('http://rightsstatements.org' . $result['headers']['location'], $options);
-  $result_json = get_object_vars($result_redirect);
-  $result_json = get_object_vars(json_decode($result_json['data']));
+  $result_template = get_object_vars($result['template']);
 
-  $definitions = $result_json['definition'];
+  $title = $result_template['title'];
+  $description = $result_template['description'];
 
-  $preferred_language = !empty($_SERVER['HTTP_ACCEPT_LANGUAGE']) ? strtok(strip_tags($_SERVER['HTTP_ACCEPT_LANGUAGE']), ',') : '';
-  $preferred_language = substr($preferred_language, 0, 2);
-  $possible_languages = ['de', 'et', 'fi', 'fr', 'pl', 'en', 'sv-fi', 'es'];
-  if (in_array($preferred_language, $possible_languages, true)) {
-    $language = $preferred_language;
-  }
-  else {
-    $language = 'en';
-  }
+  $image_array = get_object_vars($result_template['icon']);
+  $image_path = $base_url . $image_array['url'];
 
-  foreach ($definitions AS $definition) {
-    $definition = get_object_vars($definition);
-    if ($definition['@language'] == $language) {
-      $definition_value = $definition['@value'];
-    }
-  }
+  $alt_text = '<p>' . $title . '</p><p>' . $description . '</p>';
 
-  $notes = $result_json['note'];
-
-  foreach ($notes AS $note) {
-    $note = get_object_vars($note);
-    if ($note['@language'] == $language) {
-      $note_value = $note['@value'];
-    }
-  }
-
-  $titles = $result_json['prefLabel'];
-
-  foreach ($titles AS $title) {
-    $title = get_object_vars($title);
-    if ($title['@language'] == $language) {
-      $title_value = $title['@value'];
-    }
-  }
-  $alt_text = $title_value . '<p>' . $definition_value . '</p><p>' . $note_value . '</p>';
-*/
-dd($result);
   $img = array(
     '#theme' => 'image',
-    '#path' => $image,
+    '#path' => $image_path,
     '#alt' => $alt_text,
     '#height' => $height,
-    '#title' => $title_value,
+    '#title' => $title,
   );
+
   $badge = array(
     '#type' => 'link',
     '#title' => drupal_render($img),
