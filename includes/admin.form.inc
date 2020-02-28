@@ -17,6 +17,14 @@ function islandora_tk_labels_admin_form($form, $form_settings) {
     '#description' => t('The height in pixels for the TK Labels badge image.'),
     '#default_value' => variable_get('islandora_tk_labels_image_height', '31'),
   );
+
+  $form['islandora_tk_labels_include_title'] = array(
+    '#type' => 'checkbox',
+    '#title' => t('Include label title on rendered badge'),
+    '#default_value' => variable_get('islandora_tk_labels_include_title', 0),
+    '#description' => t('Include the TK Label title alongside the label icon in the rendered badge.
+      Title and label are given the classes "tk-text" and "tk-icon" to allow custom CSS styling.'),
+  );
   
   $form['islandora_tk_labels_user'] = array(
     '#type' => 'textfield',

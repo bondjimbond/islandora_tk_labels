@@ -128,9 +128,16 @@ function islandora_tk_labels_get_html($uri) {
     '#title' => $title,
   );
 
+  if (variable_get('islandora_tk_labels_include_title', 0) == 0) {
+    $badge_content = '<div class="tk-icon">' . drupal_render($img) . '</div>';
+  }
+  else {
+    $badge_content = '<div class="tk-text">' . $title . '</div><div class="tk-icon">' . drupal_render($img) . '</div>';
+  }
+
   $badge = array(
     '#type' => 'link',
-    '#title' => drupal_render($img),
+    '#title' => $badge_content,
     '#href' => $uri,
     '#options' => array(
       'attributes' => array(
