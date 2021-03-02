@@ -10,6 +10,8 @@
 function islandora_tk_labels_uninstall() {
   $vars = array(
     islandora_tk_labels_rights_field,
+    islandora_tk_labels_attribution_field,
+    islandora_tk_labels_attribution_text,
     islandora_tk_labels_image_height,
     islandora_tk_labels_user,
     islandora_tk_labels_password,

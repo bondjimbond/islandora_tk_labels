@@ -11,6 +11,20 @@ function islandora_tk_labels_admin_form($form, $form_settings) {
     '#default_value' => variable_get('islandora_tk_labels_rights_field', 'dc.rights'),
   );
 
+  $form['islandora_tk_labels_attribution_field'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Solr field for the CI Attribution Incomplete information'),
+    '#description' => t('The solr field where Islandora will find the CI Attribution Incomplete information.'),
+    '#default_value' => variable_get('islandora_tk_labels_attribution_field', 'mods_note_CI_Notice_s''),
+  );
+
+  $form['islandora_tk_labels_attribution_text'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Text to identify if an object requires the Attribution Incomplete label'),
+    '#description' => t('The complete value of the Solr field to match when identifying Attribution Incomplete objects.'),
+    '#default_value' => variable_get('islandora_tk_labels_attribution_text', 'Attribution incomplete'),
+  );
+
   $form['islandora_tk_labels_image_height'] = array(
     '#type' => 'textfield',
     '#title' => t('Image Height'),

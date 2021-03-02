@@ -33,6 +33,14 @@ function islandora_tk_labels_block_info() {
       'info' => t('Islandora TK Labels Badge'),
     ),
   );
+  return array(
+    'islandora_tk_labels_ci_notice'  => array(
+      'visibility' => BLOCK_VISIBILITY_LISTED,
+      'pages' => 'islandora/object/*',
+      'cache' => DRUPAL_CACHE_PER_PAGE,
+      'info' => t('Attribution Incomplete Notice'),
+    ),
+  );
 }
 
 /**
@@ -54,6 +62,20 @@ function islandora_tk_labels_block_view($delta = '') {
         }
         $badge = islandora_tk_labels_get_html($uri);
         $to_render['content'] = $badge;
+      }
+    }
+  }
+  if ($delta == 'islandora_tk_labels_ci_notice') {
+    $object = menu_get_object('islandora_object', 2);
+    if ($object) {
+      // Check CModel against Badges configuration.
+      if (islandora_badges_show_for_cmodel($object)) {
+        $attribution = islandora_tk_labels_get_attribution_notice($object);
+        if (!isset($attribution)) {
+          return;
+        }
+        $ci_badge = islandora_tk_labels_ci_html($attribution);
+        $to_render['content'] = $to_render['content'] . $ci_badge;
       }
     }
   }
