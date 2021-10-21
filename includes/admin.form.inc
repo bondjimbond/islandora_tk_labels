@@ -4,11 +4,18 @@
  * TK Labels badge admin options
  */
 function islandora_tk_labels_admin_form($form, $form_settings) {
-  $form['islandora_tk_labels_rights_field'] = array(
+  $form['islandora_tk_labels_project_field'] = array(
     '#type' => 'textfield',
-    '#title' => t('Solr field for TK Labels URI'),
-    '#description' => t('The solr field that contains the TK Labels URI'),
-    '#default_value' => variable_get('islandora_tk_labels_rights_field', 'dc.rights'),
+    '#title' => t('Solr field for TK Labels Project ID'),
+    '#description' => t('The solr field that contains the TK Labels Project Identifier.'),
+    '#default_value' => variable_get('islandora_tk_labels_project_field', 'dc.identifier'),
+  );
+  $form['islandora_tk_labels_identifier_label'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Identifier label'),
+    '#description' => t('If your project ID field uses a label (e.g. "Project ID" or "local"), enter it here.
+      It will be used to separate the Project ID from other identifiers.'),
+    '#default_value' => variable_get('islandora_tk_labels_identifier_label', 'Project ID'),
   );
 
   $form['islandora_tk_labels_image_height'] = array(

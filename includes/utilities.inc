@@ -21,31 +21,45 @@ function islandora_tk_labels_get_uri(AbstractObject $object) {
     '@field' => 'PID',
     '@pid' =>"{$object->id}")
   ));
-  $uri_field = variable_get('islandora_tk_labels_rights_field', 'dc.rights');
+  $project_field = variable_get('islandora_tk_labels_project_field', 'dc.identifier');
   $qp->solrParams['fl'] = implode(', ', array(
     'PID',
-    $uri_field,
+    $project_field,
   ));
   $qp->solrStart = 0;
   $qp->solrLimit = 100000;
   $qp->executeQuery(FALSE);
   if ($qp->islandoraSolrResult['response']['numFound'] > 0) {
-    if (array_key_exists($uri_field, $qp->islandoraSolrResult['response']['objects']['0']['solr_doc'])) {
-      $rights_uri_array = ($qp->islandoraSolrResult['response']['objects']['0']['solr_doc'][$uri_field]);
-      foreach ($rights_uri_array as $uri) {
-        if (strpos($uri, 'localcontexts.org')) {
-          $rights_uri = $uri;
+    if (array_key_exists($project_field, $qp->islandoraSolrResult['response']['objects']['0']['solr_doc'])) {
+      $identifier_array = ($qp->islandoraSolrResult['response']['objects']['0']['solr_doc'][$project_field]);
+      if (is_array($identifier_array)) {
+        foreach ($identifier_array as $identifier) {
+          $project_id = islandora_tk_labels_find_project_id($identifier);
         }
+      }
+      else {
+        $project_id = islandora_tk_labels_find_project_id($identifier_array);
       }
     }
   }
-  if (!isset($rights_uri)) {
+  if (!isset($project_id)) {
     return;
   }
   else {
-    return $rights_uri;
+    return $project_id;
   }
 }
+
+function islandora_tk_labels_find_project_id($identifier) {
+  $identifier_parts = explode("-", $identifier);
+  if (count($identifier_parts) == 5) {
+    $project_id = $identifier;
+  
+  } 
+  return $project_id;
+}
+
+/* Authentication may not be necessary anymore?
 
 function islandora_tk_labels_authenticate() {
   $url = "https://api.localcontexts.org/v0/auth/local";
@@ -76,76 +90,78 @@ function islandora_tk_labels_authenticate() {
 
   return($token);
 }
-
+*/
 
 /**
  * Take URI, return HTML code for a rights statement badge.
  * @return string
  */
-function islandora_tk_labels_get_html($uri) {
+function islandora_tk_labels_get_html($project_id) {
   $height = variable_get('islandora_tk_labels_image_height', '31');
-  $token = islandora_tk_labels_authenticate();
-  $token = 'Bearer ' . $token;
   // Extract the relevant info from the URI and translate to an API URI.
-  $community = "demo-community";
-  $class = "TK";
-  $code = explode("/", $uri);
-  end($code);
-  $code = strtoupper(prev($code));
-  $base_url = "https://api.localcontexts.org/v0";
-  $request_url = $base_url . "/labels/" . $community . "/" . $class . "/" . $code;
+  $base_url = "https://localcontextshub.org/api/v1/projects/";
+
+  $request_url = $base_url . $project_id . "/";
 
   $options = array(
     'method' => 'GET',
     'headers' => array(
       'Accept' => 'application/json',
-      'Authorization' => $token,
     ),
   );
 
   // The result has lots of objects that must be turned into arrays.
   $result = get_object_vars(drupal_http_request($request_url, $options));
   $result = get_object_vars(json_decode($result['data']));
+  $notice = get_object_vars($result['notice'][0]);
+  $project_title = $result['title'];
+  $notice_type = $notice['notice_type'];
+  $bc_image_url = $notice['bc_img_url'];
+  $bc_text = $notice['bc_default_text'];
+  $tk_image_url = $notice['tk_img_url'];
+  $tk_text = $notice['tk_default_text'];
   
- // Using $result gets you the result for a specific community. Currently using the demo community, which is California.
- // Using $result_template gets you the generic information, so using that until we learn more about how communities work.
+  $title = $notice_type;
 
-  $result_template = get_object_vars($result['template']);
-
-  $title = $result_template['title'];
-  $description = $result_template['description'];
-
-  $image_array = get_object_vars($result_template['icon']);
-  $image_path = $base_url . $image_array['url'];
-
-  $alt_text = '<p>' . $title . '</p><p>' . $description . '</p>';
-
-  $img = array(
+  $bc_image = array(
     '#theme' => 'image',
-    '#path' => $image_path,
-    '#alt' => $alt_text,
+    '#path' => $bc_image_url,
+    '#alt' => $bc_text,
     '#height' => $height,
-    '#title' => $title,
+    '#title' => 'Biocultural Notice',
+  );
+  $bc_markup = '<div class="bc_icon">' . drupal_render($bc_image) . '</div><div class="bc_text">' . $bc_text . '</div>';
+  $bc_badge = array(
+    '#type' => 'markup',
+    '#title' => 'Biocultural Notice',
+    '#markup' => $bc_markup,
+  );
+  $tk_image = array(
+    '#theme' => 'image',
+    '#path' => $tk_image_url,
+    '#alt' => $tk_text,
+    '#height' => $height,
+    '#title' => "Traditional Knowledge Label",
+  );
+  $tk_markup = '<div class="tk_icon">' . drupal_render($tk_image) . '</div><div class="tk_text">' . $tk_text . '</div>';
+  $tk_badge = array(
+    '#type' => 'markup',
+    '#title' => 'Traditional Knowledge Label',
+    '#markup' => $tk_markup,                                                                                              
   );
 
-  if (variable_get('islandora_tk_labels_include_title', 0) == 0) {
-    $badge_content = '<div class="tk-icon">' . drupal_render($img) . '</div>';
+  if ($title == "biocultural_and_traditional_knowledge") {
+    $badge = array(
+      $bc_badge,
+      $tk_badge,
+      );
   }
-  else {
-    $badge_content = '<div class="tk-text">' . $title . '</div><div class="tk-icon">' . drupal_render($img) . '</div>';
+  elseif ($title == "traditional_knowledge") {
+    $badge = $tk_badge;
   }
-
-  $badge = array(
-    '#type' => 'link',
-    '#title' => $badge_content,
-    '#href' => $uri,
-    '#options' => array(
-      'attributes' => array(
-        'target' => '_blank',
-      ),
-      'html' => TRUE,
-    ),
-  );
+  elseif ($title == "biocultural") {
+    $badge = $bc_badge;
+  }
   return $badge;
 }
 
