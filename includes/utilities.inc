@@ -161,18 +161,10 @@ dd($result);
       '#markup' => $tk_markup,                                                                                              
     );
 
-  //  if ($title == "biocultural_and_traditional_knowledge") {
-      $badge = array(
-        $bc_badge,
-        $tk_badge,
-        );
-  //  }
-  /*  elseif ($title == "traditional_knowledge") {
-      $badge = $tk_badge;
-    }
-    elseif ($title == "biocultural") {
-      $badge = $bc_badge;
-    } */
+    $badge = array(
+      $bc_badge,
+      $tk_badge,
+    );
   }
   $badge_array = array();
   if (isset($bc_labels)) {
@@ -188,7 +180,7 @@ dd($result);
         '#height' => $height,
         '#title' => $label_type,
       );
-      $bc_markup = '<div class="bc_icon">' . drupal_render($bc_image) . '</div><div class="bc_text">' . $bc_text . '</div>';
+      $bc_markup = '<div class="bc_icon">' . drupal_render($bc_image) . '</div><div class="lc_textblock"><div class="bc_title">' . $label_type . '</div><div class="bc_text">' . $bc_text . '</div></div>';
       $bc_badge = array(
         '#type' => 'markup',
         '#title' => $label_type,
@@ -210,7 +202,7 @@ dd($result);
         '#height' => $height,
         '#title' => $label_type,
       );
-      $tk_markup = '<div class="tk_icon">' . drupal_render($tk_image) . '</div><div class="tk_text">' . $tk_text . '</div>';
+      $tk_markup = '<div class="tk_icon">' . drupal_render($tk_image) . '</div><div class="lc textblock"><div class="tk_title">' . $label_type . '</div><div class="tk_text">' . $tk_text . '</div></div>';
       $tk_badge = array(
         '#type' => 'markup',
         '#title' => $label_type,
