@@ -113,55 +113,118 @@ function islandora_tk_labels_get_html($project_id) {
   // The result has lots of objects that must be turned into arrays.
   $result = get_object_vars(drupal_http_request($request_url, $options));
   $result = get_object_vars(json_decode($result['data']));
-  $notice = get_object_vars($result['notice'][0]);
+dd($result);
+  // In the JSON response, the 'notice' key only exists if there is no label yet applied.
+  if (array_key_exists('notice', $result)) {
+    $notice = get_object_vars($result['notice'][0]);
+  }
+  if (array_key_exists('bc_labels', $result)) {
+    $bc_labels = $result['bc_labels'];
+  }
+  if (array_key_exists('tk_labels', $result)) {
+    $tk_labels = $result['tk_labels'];
+  }
+
   $project_title = $result['title'];
-  $notice_type = $notice['notice_type'];
-  $bc_image_url = $notice['bc_img_url'];
-  $bc_text = $notice['bc_default_text'];
-  $tk_image_url = $notice['tk_img_url'];
-  $tk_text = $notice['tk_default_text'];
-  
-  $title = $notice_type;
 
-  $bc_image = array(
-    '#theme' => 'image',
-    '#path' => $bc_image_url,
-    '#alt' => $bc_text,
-    '#height' => $height,
-    '#title' => 'Biocultural Notice',
-  );
-  $bc_markup = '<div class="bc_icon">' . drupal_render($bc_image) . '</div><div class="bc_text">' . $bc_text . '</div>';
-  $bc_badge = array(
-    '#type' => 'markup',
-    '#title' => 'Biocultural Notice',
-    '#markup' => $bc_markup,
-  );
-  $tk_image = array(
-    '#theme' => 'image',
-    '#path' => $tk_image_url,
-    '#alt' => $tk_text,
-    '#height' => $height,
-    '#title' => "Traditional Knowledge Label",
-  );
-  $tk_markup = '<div class="tk_icon">' . drupal_render($tk_image) . '</div><div class="tk_text">' . $tk_text . '</div>';
-  $tk_badge = array(
-    '#type' => 'markup',
-    '#title' => 'Traditional Knowledge Label',
-    '#markup' => $tk_markup,                                                                                              
-  );
+  if (isset($notice)) {
+    $notice_type = $notice['notice_type'];
+    $bc_image_url = $notice['bc_img_url'];
+    $bc_text = $notice['bc_default_text'];
+    $tk_image_url = $notice['tk_img_url'];
+    $tk_text = $notice['tk_default_text'];
+    $title = $notice_type;
+    $bc_image = array(
+      '#theme' => 'image',
+      '#path' => $bc_image_url,
+      '#alt' => $bc_text,
+      '#height' => $height,
+      '#title' => 'Biocultural Notice',
+    );
+    $bc_markup = '<div class="bc_icon">' . drupal_render($bc_image) . '</div><div class="bc_text">' . $bc_text . '</div>';
+    $bc_badge = array(
+      '#type' => 'markup',
+      '#title' => 'Biocultural Notice',
+      '#markup' => $bc_markup,
+    );
+    $tk_image = array(
+      '#theme' => 'image',
+      '#path' => $tk_image_url,
+      '#alt' => $tk_text,
+      '#height' => $height,
+      '#title' => "Traditional Knowledge Label",
+    );
+    $tk_markup = '<div class="tk_icon">' . drupal_render($tk_image) . '</div><div class="tk_text">' . $tk_text . '</div>';
+    $tk_badge = array(
+      '#type' => 'markup',
+      '#title' => 'Traditional Knowledge Label',
+      '#markup' => $tk_markup,                                                                                              
+    );
 
-  if ($title == "biocultural_and_traditional_knowledge") {
-    $badge = array(
-      $bc_badge,
-      $tk_badge,
+  //  if ($title == "biocultural_and_traditional_knowledge") {
+      $badge = array(
+        $bc_badge,
+        $tk_badge,
+        );
+  //  }
+  /*  elseif ($title == "traditional_knowledge") {
+      $badge = $tk_badge;
+    }
+    elseif ($title == "biocultural") {
+      $badge = $bc_badge;
+    } */
+  }
+  $badge_array = array();
+  if (isset($bc_labels)) {
+    foreach($bc_labels as $bc_label) {
+      $bc_label = get_object_vars($bc_label);
+      $label_type = $bc_label['name'];
+      $bc_image_url = $bc_label['img_url'];
+      $bc_text = $bc_label['default_text'];
+      $bc_image = array(
+        '#theme' => 'image',
+        '#path' => $bc_image_url,
+        '#alt' => $bc_text,
+        '#height' => $height,
+        '#title' => $label_type,
       );
+      $bc_markup = '<div class="bc_icon">' . drupal_render($bc_image) . '</div><div class="bc_text">' . $bc_text . '</div>';
+      $bc_badge = array(
+        '#type' => 'markup',
+        '#title' => $label_type,
+        '#markup' => $bc_markup,
+      );
+      $badge_array[] = $bc_badge;      
+    }
   }
-  elseif ($title == "traditional_knowledge") {
-    $badge = $tk_badge;
+  if (isset($tk_labels)) {
+    foreach($tk_labels as $tk_label) {
+      $tk_label = get_object_vars($tk_label);
+      $label_type = $tk_label['name'];
+      $tk_image_url = $tk_label['img_url'];
+      $tk_text = $tk_label['default_text'];
+      $tk_image = array(
+        '#theme' => 'image',
+        '#path' => $tk_image_url,
+        '#alt' => $tk_text,
+        '#height' => $height,
+        '#title' => $label_type,
+      );
+      $tk_markup = '<div class="tk_icon">' . drupal_render($tk_image) . '</div><div class="tk_text">' . $tk_text . '</div>';
+      $tk_badge = array(
+        '#type' => 'markup',
+        '#title' => $label_type,
+        '#markup' => $tk_markup,
+      );
+      $badge_array[] = $tk_badge;
+    }
   }
-  elseif ($title == "biocultural") {
-    $badge = $bc_badge;
+  
+  if (isset($notice)) {
+    return $badge;
   }
-  return $badge;
+  else {
+    return $badge_array;
+  }
 }
 
