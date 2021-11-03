@@ -1,0 +1,10 @@
+islandora_tk_labels_style:
+  version: 1.x
+  css:
+    theme:
+      css/showhide.css: {}
+  js:
+    js/showhide.js: {}
+  dependencies:
+    - core/jquery
+

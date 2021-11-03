@@ -113,7 +113,6 @@ function islandora_tk_labels_get_html($project_id) {
   // The result has lots of objects that must be turned into arrays.
   $result = get_object_vars(drupal_http_request($request_url, $options));
   $result = get_object_vars(json_decode($result['data']));
-dd($result);
   // In the JSON response, the 'notice' key only exists if there is no label yet applied.
   if (array_key_exists('notice', $result)) {
     $notice = get_object_vars($result['notice'][0]);
@@ -146,6 +145,10 @@ dd($result);
       '#type' => 'markup',
       '#title' => 'Biocultural Notice',
       '#markup' => $bc_markup,
+      '#attached' => [
+        'library' => ['islandora_tk_labels/islandora_tk_labels_style',
+        ],
+      ],
     );
     $tk_image = array(
       '#theme' => 'image',
@@ -159,6 +162,10 @@ dd($result);
       '#type' => 'markup',
       '#title' => 'Traditional Knowledge Label',
       '#markup' => $tk_markup,                                                                                              
+      '#attached' => [
+        'library' => ['islandora_tk_labels/islandora_tk_labels_style',
+        ],
+      ],
     );
 
     $badge = array(
@@ -185,6 +192,10 @@ dd($result);
         '#type' => 'markup',
         '#title' => $label_type,
         '#markup' => $bc_markup,
+      '#attached' => [
+        'library' => ['islandora_tk_labels/islandora_tk_labels_style',
+        ],
+      ],
       );
       $badge_array[] = $bc_badge;      
     }
@@ -207,6 +218,10 @@ dd($result);
         '#type' => 'markup',
         '#title' => $label_type,
         '#markup' => $tk_markup,
+      '#attached' => [
+        'library' => ['islandora_tk_labels/islandora_tk_labels_style',
+        ],
+      ],
       );
       $badge_array[] = $tk_badge;
     }
@@ -216,6 +231,7 @@ dd($result);
     return $badge;
   }
   else {
+dd($badge_array);
     return $badge_array;
   }
 }
