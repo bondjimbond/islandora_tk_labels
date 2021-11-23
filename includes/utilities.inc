@@ -59,39 +59,6 @@ function islandora_tk_labels_find_project_id($identifier) {
   return $project_id;
 }
 
-/* Authentication may not be necessary anymore?
-
-function islandora_tk_labels_authenticate() {
-  $url = "https://api.localcontexts.org/v0/auth/local";
-  $user = variable_get('islandora_tk_labels_user');
-  $password = variable_get('islandora_tk_labels_password');
-  $options = array(
-    'method' => 'POST',
-    'headers' => array(
-      'Content-Type' => 'application/json',
-      'Accept' => 'application/json',
-    ),
-    'data' => json_encode(array(
-       'identifier' => $user,
-       'password' => $password,
-    )),
-  );
-
-  $response = drupal_http_request($url, $options);
-  $response = json_decode(json_encode($response), true)['data'];
-  $response = explode(",", $response);
-  foreach ($response AS $key) {
-    if (strpos($key, 'jwt') !== false) {
-      $token_key = $key;
-    }
-  }
-  $token_array = explode(":", $token_key);
-  $token = str_replace('"', '', $token_array[1]);
-
-  return($token);
-}
-*/
-
 /**
  * Take URI, return HTML code for a rights statement badge.
  * @return string
@@ -112,6 +79,11 @@ function islandora_tk_labels_get_html($project_id) {
 
   // The result has lots of objects that must be turned into arrays.
   $result = get_object_vars(drupal_http_request($request_url, $options));
+  // If there is a timeout checking for badges, we exit early.
+  if ($result['code'] == "-110") {
+    return;
+  }
+
   $result = get_object_vars(json_decode($result['data']));
   // In the JSON response, the 'notice' key only exists if there is no label yet applied.
   if (array_key_exists('notice', $result)) {
@@ -140,7 +112,7 @@ function islandora_tk_labels_get_html($project_id) {
       '#height' => $height,
       '#title' => 'Biocultural Notice',
     );
-    $bc_markup = '<div class="bc_icon">' . drupal_render($bc_image) . '</div><div class="bc_text">' . $bc_text . '</div>';
+    $bc_markup = '<div class="tk_icon">' . drupal_render($bc_image) . '</div><div class="lc_textblock"><div class="tk_text">' . $bc_text . '</div></div>';
     $bc_badge = array(
       '#type' => 'markup',
       '#title' => 'Biocultural Notice',
@@ -157,7 +129,8 @@ function islandora_tk_labels_get_html($project_id) {
       '#height' => $height,
       '#title' => "Traditional Knowledge Label",
     );
-    $tk_markup = '<div class="tk_icon">' . drupal_render($tk_image) . '</div><div class="tk_text">' . $tk_text . '</div>';
+//    $tk_markup = '<div class="tk_icon" onclick="showHide()">' . drupal_render($tk_image) . '</div><div class="lc_textblock"><div class="tk_text">' . $tk_text . '</div></div>';
+    $tk_markup = '<div class="tk_icon">' . drupal_render($tk_image) . '</div><div class="lc_textblock"><div class="tk_text">' . $tk_text . '</div></div>';
     $tk_badge = array(
       '#type' => 'markup',
       '#title' => 'Traditional Knowledge Label',
@@ -187,7 +160,7 @@ function islandora_tk_labels_get_html($project_id) {
         '#height' => $height,
         '#title' => $label_type,
       );
-      $bc_markup = '<div class="bc_icon">' . drupal_render($bc_image) . '</div><div class="lc_textblock"><div class="bc_title">' . $label_type . '</div><div class="bc_text">' . $bc_text . '</div></div>';
+      $bc_markup = '<div class="tk_icon"">' . drupal_render($bc_image) . '</div><div class="lc_textblock"><div class="tk_title">' . $label_type . '</div><div class="tk_text">' . $bc_text . '</div></div>';
       $bc_badge = array(
         '#type' => 'markup',
         '#title' => $label_type,
@@ -213,7 +186,8 @@ function islandora_tk_labels_get_html($project_id) {
         '#height' => $height,
         '#title' => $label_type,
       );
-      $tk_markup = '<div class="tk_icon">' . drupal_render($tk_image) . '</div><div class="lc textblock"><div class="tk_title">' . $label_type . '</div><div class="tk_text">' . $tk_text . '</div></div>';
+//      $tk_markup = '<div class="tk_icon" onclick="showHide()">' . drupal_render($tk_image) . '</div><div class="lc_textblock"><div class="tk_title">' . $label_type . '</div><div class="tk_text">' . $tk_text . '</div></div>';
+      $tk_markup = '<div class="tk_icon">' . drupal_render($tk_image) . '</div><div class="lc_textblock"><div class="tk_title">' . $label_type . '</div><div class="tk_text">' . $tk_text . '</div></div>';
       $tk_badge = array(
         '#type' => 'markup',
         '#title' => $label_type,
@@ -231,7 +205,6 @@ function islandora_tk_labels_get_html($project_id) {
     return $badge;
   }
   else {
-dd($badge_array);
     return $badge_array;
   }
 }

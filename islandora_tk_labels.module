@@ -57,5 +57,10 @@ function islandora_tk_labels_block_view($delta = '') {
       }
     }
   }
+  drupal_add_js(drupal_get_path('module', 'islandora_tk_labels') . '/js/islandora_tk_labels_style.js');
+  drupal_add_library('islandora_tk_labels', 'islandora_tk_labels_style');
+dd($to_render);
+  $to_render['#attached']['library'][] = 'islandora_tk_labels/islandora_tk_labels_style';
+dd($to_render);
   return $to_render;
 }
