@@ -11,8 +11,6 @@ function islandora_tk_labels_uninstall() {
   $vars = array(
     islandora_tk_labels_project_field,
     islandora_tk_labels_image_height,
-    islandora_tk_labels_user,
-    islandora_tk_labels_password,
   );
   array_walk($vars, 'variable_del');
 }
