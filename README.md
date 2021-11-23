@@ -27,17 +27,20 @@ Install as usual, see [this](https://drupal.org/documentation/install/modules-th
 
 Configuration path is admin/islandora/tools/badges/tk_labels (Administration > Islandora > Islandora Utility Modules > Islandora Badges Configuration > TK Labels).
 
-* Solr field for TK Labels URI: Defaults to dc.rights. Prefer a multivalued field.
+* Solr field for TK Labels Project ID: Defaults to dc.identifier. Prefer a multivalued field.
 * Image Height: Set the image height in pixels.
-* API user ID and password: Get an API key by requesting an account at https://hub.localcontexts.org.
 
 ## Metadata
 
-You can choose any element for your TK Label URI, so long as it creates a Solr field. The default is `dc.rights`.
+You can choose any element for your TK Label Project ID, so long as it creates a Solr field. The default is `dc.identifier`.
 
-The value of the field must be a URI to the TK Label. Example from a MODS datastream:
+The value of the field must be a LocalContexts Project ID. Example from a MODS datastream:
 
-`<accessCondition type="use and reproduction" displayLabel="Traditional Knowledge Label">https://localcontexts.org/tk/mc/1.0/</accessCondition>`
+`<identifier type="LocalContexts" displayLabel="LocalContexts Project ID">c44a70ea-d2a3-4198-b967-513167c52f15</accessCondition>`
+
+You will need to create projects for your objects in the [LocalContexts Hub](https://localcontextshub.org) before using this module.
+
+Projects can be created before labels are produced. Labels will automatically be updated via the API when Indigenous groups create them through the Hub.
 
 ## Troubleshooting/Issues
 
