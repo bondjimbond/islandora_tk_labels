@@ -112,15 +112,11 @@ function islandora_tk_labels_get_html($project_id) {
       '#height' => $height,
       '#title' => 'Biocultural Notice',
     );
-    $bc_markup = '<div class="tk_icon">' . drupal_render($bc_image) . '</div><div class="lc_textblock"><div class="tk_text">' . $bc_text . '</div></div>';
+    $bc_markup = '<div class="tk_icon">' . drupal_render($bc_image) . '</div><div class="lc_textblock" style="display:none"><div class="tk_text">' . $bc_text . '</div></div>';
     $bc_badge = array(
       '#type' => 'markup',
       '#title' => 'Biocultural Notice',
       '#markup' => $bc_markup,
-      '#attached' => [
-        'library' => ['islandora_tk_labels/islandora_tk_labels_style',
-        ],
-      ],
     );
     $tk_image = array(
       '#theme' => 'image',
@@ -129,16 +125,11 @@ function islandora_tk_labels_get_html($project_id) {
       '#height' => $height,
       '#title' => "Traditional Knowledge Label",
     );
-//    $tk_markup = '<div class="tk_icon" onclick="showHide()">' . drupal_render($tk_image) . '</div><div class="lc_textblock"><div class="tk_text">' . $tk_text . '</div></div>';
-    $tk_markup = '<div class="tk_icon">' . drupal_render($tk_image) . '</div><div class="lc_textblock"><div class="tk_text">' . $tk_text . '</div></div>';
+    $tk_markup = '<div class="tk_icon">' . drupal_render($tk_image) . '</div><div class="lc_textblock" style="display:none"><div class="tk_text">' . $tk_text . '</div></div>';
     $tk_badge = array(
       '#type' => 'markup',
       '#title' => 'Traditional Knowledge Label',
       '#markup' => $tk_markup,                                                                                              
-      '#attached' => [
-        'library' => ['islandora_tk_labels/islandora_tk_labels_style',
-        ],
-      ],
     );
 
     $badge = array(
@@ -160,15 +151,11 @@ function islandora_tk_labels_get_html($project_id) {
         '#height' => $height,
         '#title' => $label_type,
       );
-      $bc_markup = '<div class="tk_icon"">' . drupal_render($bc_image) . '</div><div class="lc_textblock"><div class="tk_title">' . $label_type . '</div><div class="tk_text">' . $bc_text . '</div></div>';
+      $bc_markup = '<div class="tk_icon"">' . drupal_render($bc_image) . '</div><div class="lc_textblock" style="display:none"><div class="tk_title">' . $label_type . '</div><div class="tk_text">' . $bc_text . '</div></div>';
       $bc_badge = array(
         '#type' => 'markup',
         '#title' => $label_type,
         '#markup' => $bc_markup,
-      '#attached' => [
-        'library' => ['islandora_tk_labels/islandora_tk_labels_style',
-        ],
-      ],
       );
       $badge_array[] = $bc_badge;      
     }
@@ -186,16 +173,11 @@ function islandora_tk_labels_get_html($project_id) {
         '#height' => $height,
         '#title' => $label_type,
       );
-//      $tk_markup = '<div class="tk_icon" onclick="showHide()">' . drupal_render($tk_image) . '</div><div class="lc_textblock"><div class="tk_title">' . $label_type . '</div><div class="tk_text">' . $tk_text . '</div></div>';
-      $tk_markup = '<div class="tk_icon">' . drupal_render($tk_image) . '</div><div class="lc_textblock"><div class="tk_title">' . $label_type . '</div><div class="tk_text">' . $tk_text . '</div></div>';
+      $tk_markup = '<div class="tk_icon">' . drupal_render($tk_image) . '</div><div class="lc_textblock" style="display:none"><div class="tk_title">' . $label_type . '</div><div class="tk_text">' . $tk_text . '</div></div>';
       $tk_badge = array(
         '#type' => 'markup',
         '#title' => $label_type,
         '#markup' => $tk_markup,
-      '#attached' => [
-        'library' => ['islandora_tk_labels/islandora_tk_labels_style',
-        ],
-      ],
       );
       $badge_array[] = $tk_badge;
     }
