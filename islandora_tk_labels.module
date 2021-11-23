@@ -48,14 +48,19 @@ function islandora_tk_labels_block_view($delta = '') {
     if ($object) {
       // Check CModel against Badges configuration.
       if (islandora_badges_show_for_cmodel($object)) {
-        $uri = islandora_tk_labels_get_uri($object);
-        if (!isset($uri)) { 
+        $project_id = islandora_tk_labels_get_uri($object);
+        if (!isset($project_id)) { 
           return;
         }
-        $badge = islandora_tk_labels_get_html($uri);
+        $badge = islandora_tk_labels_get_html($project_id);
         $to_render['content'] = $badge;
       }
     }
   }
+  drupal_add_js(drupal_get_path('module', 'islandora_tk_labels') . '/js/islandora_tk_labels_style.js');
+  drupal_add_library('islandora_tk_labels', 'islandora_tk_labels_style');
+dd($to_render);
+  $to_render['#attached']['library'][] = 'islandora_tk_labels/islandora_tk_labels_style';
+dd($to_render);
   return $to_render;
 }
