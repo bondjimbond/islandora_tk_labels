@@ -54,7 +54,6 @@ function islandora_tk_labels_find_project_id($identifier) {
   $identifier_parts = explode("-", $identifier);
   if (count($identifier_parts) == 5) {
     $project_id = $identifier;
-  
   } 
   return $project_id;
 }
@@ -80,7 +79,7 @@ function islandora_tk_labels_get_html($project_id) {
   // The result has lots of objects that must be turned into arrays.
   $result = get_object_vars(drupal_http_request($request_url, $options));
   // If there is a timeout checking for badges, we exit early.
-  if ($result['code'] == "-110") {
+  if ($result['code'] == "-110" || $result['code'] == "404") {
     return;
   }
 
