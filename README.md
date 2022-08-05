@@ -27,6 +27,10 @@ Install as usual, see [this](https://drupal.org/documentation/install/modules-th
 
 Configuration path is admin/islandora/tools/badges/tk_labels (Administration > Islandora > Islandora Utility Modules > Islandora Badges Configuration > TK Labels).
 
+Detailed documentation:
+* [Module configuration](https://docs.google.com/document/d/1QHZuCZwPbLvufSr1v4xoRwkaFWxZnp3TluCqwnSNLdU/edit)
+* [Working in the Local Contexts Hub](https://docs.google.com/document/d/1x0RsD2Wp405Se3II5UzYXZj9Si-z7mCR3AM9Xy1Oeug/edit)
+
 * Solr field for TK Labels Project ID: Defaults to dc.identifier. Prefer a multivalued field.
 * Image Height: Set the image height in pixels.
 
