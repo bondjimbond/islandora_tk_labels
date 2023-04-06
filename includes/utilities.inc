@@ -150,7 +150,7 @@ function islandora_tk_labels_get_html($project_id) {
         '#height' => $height,
         '#title' => $label_type,
       );
-      $bc_markup = '<div class="tk_icon"">' . drupal_render($bc_image) . '</div><div class="lc_textblock" style="display:none"><div class="tk_title">' . $label_type . '</div><div class="tk_text">' . $bc_text . '</div></div>';
+      $bc_markup = '<div class="tk_icon">' . drupal_render($bc_image) . '</div><div class="lc_textblock" style="display:none"><div class="tk_title">' . $label_type . '</div><div class="tk_text">' . $bc_text . '</div></div>';
       $bc_badge = array(
         '#type' => 'markup',
         '#title' => $label_type,
